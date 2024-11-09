@@ -1,8 +1,16 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox
+from PySide6.QtWidgets import (
+    QApplication,
+    QFileDialog,
+    QMainWindow,
+    QWidget,
+    QMessageBox,
+)
+import database
 from ui_login import Ui_Login
 from ui_main import Ui_MainWindow
 import sys
 from database import Database
+from xml_files import Read_xml
 
 
 class Login(QWidget, Ui_Login):
@@ -66,8 +74,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_pg_cadastro.clicked.connect(
             lambda: self.Pages.setCurrentWidget(self.pg_cadastro)
         )
+        self.btn_pg_import.clicked.connect(
+            lambda: self.Pages.setCurrentWidget(self.pg_import)
+        )
 
         self.btn_cadastrar.clicked.connect(self.subscribe_user)
+
+        # ARQUIVO XML
+        self.btn_open.clicked.connect(self.open_path)
+        self.btn_import.clicked.connect(self.import_xml_files)
 
     def subscribe_user(self):
         msg = QMessageBox()
@@ -105,6 +120,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.txt_usuario.setText("")
         self.txt_password.setText("")
         self.txt_password_confirm.setText("")
+
+    def open_path(self):
+        self.path = QFileDialog.getExistingDirectory(
+            self,
+            str("Open Directory"),
+            "/home",
+            QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks,
+        )
+        self.txt_file.setText(self.path)
+
+    # metodo que vai importar xml a partir da interface
+    def import_xml_files(self):
+
+        xml = Read_xml(self.txt_file.text())
+        all = xml.all_files()
+        self.progressBar.setMaximum(len(all))
+
+        db = Database()
+        db.conecta()
+        cont = 1
+
+        for i in all:
+            self.progressBar.setValue(cont)
+            fullDataSet = xml.nfe_data(i)
+            db.insert_data(fullDataSet)
+            cont += 1
+
+        # ATUALIZA A TABELA
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Importação XML")
+        msg.setText("importação concluída!")
+        msg.exec_()
+        self.progressBar.setValue(0)
+
+        db.close_connection()
 
 
 if __name__ == "__main__":
