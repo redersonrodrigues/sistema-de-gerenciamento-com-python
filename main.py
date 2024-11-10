@@ -30,7 +30,7 @@ class Login(QWidget, Ui_Login):
         self.tentativas = 0
         self.setupUi(self)
         self.setWindowTitle("Login do Sistema")
-        appIcon = QIcon("_imgs/logo.PNG")
+        appIcon = QIcon("assets/_imgs/icone.ico")
         self.setWindowIcon(appIcon)
 
         self.btn_login.clicked.connect(self.checkLogin)
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Sistema de gerenciamento")
-        appIcon = QIcon("_imgs/logo.PNG")
+        appIcon = QIcon("assets/_imgs/icone.ico")
         self.setWindowIcon(appIcon)
 
         self.user = username
