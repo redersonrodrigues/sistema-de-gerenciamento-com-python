@@ -394,7 +394,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Relatório de Notas")
         msg.setText("Relatório gerado com sucesso!")
-        msg.exec_()
+        msg.exec()
 
     def graphic(self):
 
