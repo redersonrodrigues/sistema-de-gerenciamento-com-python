@@ -4,76 +4,77 @@ import sqlite3
 class Database:
     def __init__(self, name="system.db") -> None:
         self.name = name
+        self.connection = None
 
     def conecta(self):
+        """Estabelece a conexão com o banco de dados."""
         self.connection = sqlite3.connect(self.name)
 
     def close_connection(self):
-        try:
+        """Fecha a conexão com o banco de dados."""
+        if self.connection:
             self.connection.close()
-        except:
-            pass
 
     def create_table_users(self):
-        try:
-            cursor = self.connection.cursor()
-            cursor.execute(
-                """
-                CREATE TABLE IF NOT EXISTS users(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    user TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL,
-                    access TEXT NOT NULL
-                );
-            """
-            )
-        except AttributeError:
+        """Cria a tabela de usuários, se não existir."""
+        if not self.connection:
             print("faça a conexão")
+            return
+        cursor = self.connection.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users(
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                user TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                access TEXT NOT NULL
+            );
+            """
+        )
 
     def insert_user(self, name, user, password, access):
-        try:
-            cursor = self.connection.cursor()
-            cursor.execute(
-                """
-                INSERT INTO users(name, user, password, access) VALUES (?, ?, ?, ?);
-            """,
-                (name, user, password, access),
-            )
-            self.connection.commit()
-        except AttributeError:
+        """Insere um novo usuário na tabela."""
+        if not self.connection:
             print("faça a conexão")
+            return
+        cursor = self.connection.cursor()
+        cursor.execute(
+            """
+            INSERT INTO users(name, user, password, access) VALUES (?, ?, ?, ?);
+            """,
+            (name, user, password, access),
+        )
+        self.connection.commit()
 
     def check_user(self, user, password):
-        try:
-            cursor = self.connection.cursor()
-            cursor.execute(
-                """
-                    SELECT * FROM users;
-                """
-            )
-            for linha in cursor.fetchall():
-                if (
-                    linha[2].upper() == user.upper()
-                    and linha[3].upper() == password.upper()
-                    and linha[4].upper() == "ADMINISTRADOR"
-                ):
-                    return "Administrador"
-                elif (
-                    linha[2].upper() == user.upper()
-                    and linha[3].upper() == password.upper()
-                    and linha[4].upper() == "USUÁRIO"
-                ):
-                    return "user"
-            return None  # Melhor usar None para login inválido
-        except:
-            pass
-
-    # insert dados na tabela Notas
-    def insert_data(self, full_dataset):
-
+        """Verifica se o usuário e senha correspondem a um usuário existente."""
+        if not self.connection:
+            print("faça a conexão")
+            return None
         cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM users")
+        for linha in cursor.fetchall():
+            if (
+                linha[2].upper() == user.upper()
+                and linha[3].upper() == password.upper()
+                and linha[4].upper() == "ADMINISTRADOR"
+            ):
+                return "Administrador"
+            elif (
+                linha[2].upper() == user.upper()
+                and linha[3].upper() == password.upper()
+                and linha[4].upper() == "USUÁRIO"
+            ):
+                return "user"
+        return None
 
+    def insert_data(self, full_dataset):
+        """Insere dados na tabela Notas."""
+        if not self.connection:
+            print("faça a conexão")
+            return
+        cursor = self.connection.cursor()
         campos_tabela = (
             "NFe",
             "serie",
@@ -92,25 +93,24 @@ class Database:
             "usuario",
             "data_saida",
         )
-        qntd = ",".join(map(str, "?" * 16))
-        query = f"""INSERT INTO Notas {campos_tabela} VALUES ({qntd})"""
-
+        qntd = ",".join(["?"] * 16)
+        query = f"INSERT INTO Notas {campos_tabela} VALUES ({qntd})"
         try:
             for nota in full_dataset:
                 cursor.execute(query, tuple(nota))
-                self.connection.commit()
+            self.connection.commit()
         except sqlite3.IntegrityError:
             print("Nota já existe no banco")
 
     def create_table_nfe(self):
-
+        """Cria a tabela Notas, se não existir."""
+        if not self.connection:
+            print("faça a conexão")
+            return
         cursor = self.connection.cursor()
-
         cursor.execute(
-            f"""
-
-                CREATE TABLE IF NOT EXISTS Notas(
-
+            """
+            CREATE TABLE IF NOT EXISTS Notas(
                 NFe TEXT,
                 serie TEXT,
                 data_emissao TEXT,
@@ -127,41 +127,42 @@ class Database:
                 data_importacao TEXT,
                 usuario TEXT,
                 data_saida TEXT,
-
-
-            
-            PRIMARY KEY(Chave, Nfe, itemNota)                
-
-                );
-
+                PRIMARY KEY(chave, NFe, itemNota)
+            );
             """
         )
 
     def uptdate_estoque(self, data_saida, user, notas):
-        try:
-            cursor = self.connection.cursor()
-            for nota in notas:
-                cursor.execute(
-                    f"""UPDATE Notas SET Data_saida = '{data_saida}', 
-                    usuario ='{user}' WHERE Nfe =  '{nota}'"""
-                )
-                self.connection.commit()
-
-        except AttributeError:
-            print("faça a conexão para alterar campos")
+        """Atualiza o estoque com a data de saída e o usuário."""
+        if not self.connection:
+            print("faça a conexão")
+            return
+        cursor = self.connection.cursor()
+        for nota in notas:
+            cursor.execute(
+                f"""UPDATE Notas SET data_saida = '{data_saida}', 
+                usuario = '{user}' WHERE NFe = '{nota}'"""
+            )
+        self.connection.commit()
 
     def update_estorno(self, notas):
+        """Estorna a data de saída das notas especificadas."""
+        if not self.connection:
+            print("faça a conexão")
+            return
+        cursor = self.connection.cursor()
+        for nota in notas:
+            cursor.execute("UPDATE Notas SET data_saida = '' WHERE NFe = ?", (nota,))
+        self.connection.commit()
 
-        try:
-            cursor = self.connection.cursor()
-
-            for nota in notas:
-                cursor.execute(f"UPDATE Notas SET Data_saida = '' WHERE NFe = {nota}")
-
-                self.connection.commit()
-
-        except AttributeError:
-            print("faça a conexão para alterar campos.")
+    def get_all_notes(self):
+        """Busca todas as notas na tabela Notas."""
+        if not self.connection:
+            print("faça a conexão")
+            return []
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM Notas")
+        return cursor.fetchall()
 
 
 if __name__ == "__main__":
@@ -169,4 +170,13 @@ if __name__ == "__main__":
     db.conecta()
     db.create_table_users()
     db.create_table_nfe()
-    db.close_connection
+
+    # Exibir todas as notas da tabela Notas
+    notas = db.get_all_notes()
+    if notas:
+        for nota in notas:
+            print(nota)
+    else:
+        print("Nenhum dado encontrado na tabela Notas.")
+
+    db.close_connection()

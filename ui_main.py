@@ -286,6 +286,7 @@ class Ui_MainWindow(object):
 
         self.tw_estoque = QTreeWidget(self.tables)
         self.tw_estoque.setObjectName(u"tw_estoque")
+        self.tw_estoque.setFont(font3)
 
         self.verticalLayout_5.addWidget(self.tw_estoque)
 
@@ -301,6 +302,7 @@ class Ui_MainWindow(object):
 
         self.tw_saida = QTreeWidget(self.tables)
         self.tw_saida.setObjectName(u"tw_saida")
+        self.tw_saida.setFont(font3)
 
         self.verticalLayout_4.addWidget(self.tw_saida)
 
@@ -444,10 +446,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_11.addWidget(self.txt_filtro)
 
-        self.tb_estoque = QTableView(self.tab_2)
-        self.tb_estoque.setObjectName(u"tb_estoque")
+        self.tb_geral = QTableView(self.tab_2)
+        self.tb_geral.setObjectName(u"tb_geral")
 
-        self.verticalLayout_11.addWidget(self.tb_estoque)
+        self.verticalLayout_11.addWidget(self.tb_geral)
 
         self.tabWidget.addTab(self.tab_2, "")
 
@@ -789,7 +791,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.Pages.setCurrentIndex(1)
+        self.Pages.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
 
 
@@ -837,11 +839,11 @@ class Ui_MainWindow(object):
         self.btn_estorno.setText(QCoreApplication.translate("MainWindow", u"Estorno", None))
         self.btn_importar.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tables), QCoreApplication.translate("MainWindow", u"Base", None))
-        self.label_18.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:600; color:#ffffff;\">ESTOQUE</span></p></body></html>", None))
+        self.label_18.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:600; color:#ffffff;\">GERAL</span></p></body></html>", None))
         self.btn_chart.setText(QCoreApplication.translate("MainWindow", u"Gera Gr\u00e1fico", None))
         self.btn_excel.setText(QCoreApplication.translate("MainWindow", u"Gera Excel", None))
         self.txt_filtro.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Filtro", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Estoque", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Geral", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:600; color:#ffffff;\">Sobre</span></p></body></html>", None))
         self.label_19.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:12pt; font-weight:600; color:#ffffff;\">Este sistema faz a importa\u00e7\u00e3o de arquivos XML e faz o controle do estoque de acordo com a entrada de notas e sa\u00eddas apontadas pelo usu\u00e1rio.</span></p></body></html>", None))
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:600; color:#ffffff;\">Contatos</span></p></body></html>", None))
