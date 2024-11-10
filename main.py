@@ -326,7 +326,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         recurse(self.tw_estoque.invisibleRootItem())
 
-        # Pergunta se usuario realmente deseja fazer isos.
+        # Pergunta se usuario realmente deseja fazer isso.
         self.question("saída")
 
     def gerar_estorno(self):
